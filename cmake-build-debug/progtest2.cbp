@@ -87,6 +87,9 @@
 		<Unit filename="/home/kalacvla/CLionProjects/progtest2/main.cpp">
 			<Option target="progtest2"/>
 		</Unit>
+		<Unit filename="/home/kalacvla/CLionProjects/progtest2/test.h">
+			<Option target="progtest2"/>
+		</Unit>
 		<Unit filename="/home/kalacvla/CLionProjects/progtest2/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

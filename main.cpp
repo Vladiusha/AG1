@@ -3,12 +3,15 @@
 
 using namespace std;
 
-class Node{
+
+class Node {
 public:
     unsigned int id;
     unsigned int revenue;
+
     Node(unsigned int id, unsigned int revenue) : id(id), revenue(revenue) {}
-    Node(){}
+
+    Node() {}
 
 private:
 public:
@@ -28,19 +31,51 @@ public:
         Node::revenue = revenue;
     }
 
+    int compareTo(Node *x) {
+        if (x->revenue < this->revenue)
+            return 1;
+        else if (x->revenue > this->revenue)
+            return -1;
+        else if (x->id < this->id)
+            return 1;
+        else if (x->id > this->id)
+            return -1;
+        else
+            return 0;
+    }
+
 };
 
+// A utility function to swap two elements
+void swapNode(Node *&x, Node *&y) {
+    Node *temp = x;
+    x = y;
+    y = temp;
+}
 
 
 class MinHeap {
 
-    Node ** harr; // pointer to array of elements in heap
+    Node **harr; // pointer to array of elements in heap
     int capacity; // maximum possible size of min heap
     int heap_size; // Current number of elements in min heap
 public:
+
+    Node **getHarr() const;
+
+    void setHarr(Node **harr);
+
+    int getCapacity() const;
+
+    void setCapacity(int capacity);
+
+    int getHeapSize() const;
+
+    void setHeapSize(int heapSize);
+
     MinHeap();
     // Constructor
-    MinHeap(int capacity);
+    //MinHeap(int capacity);
 
     // to heapify a subtree with the root at given index
     void MinHeapify(int);
@@ -54,40 +89,42 @@ public:
     int right(int i) { return (2 * i + 2); }
 
     // to extract the root which is the minimum element
-    int extractMin();
+    bool extractMin(unsigned int &id);
 
     // Decreases key value of key at index i to new_val
     void decreaseKey(int i, int new_val);
 
     // Returns the minimum key (key at root) from min heap
-    int getMin() { return harr[0]; }
+    Node *getMin() { return harr[0]; }
 
     // Deletes a key stored at index i
     void deleteKey(int i);
 
     // Inserts a new key 'k'
-    void insertKey(unsigned id, unsigned revenue );
+    void insertKey(unsigned id, unsigned revenue);
 };
 
 // Constructor: Builds a heap from a given array a[] of given size
 MinHeap::MinHeap() {
     heap_size = 0;
     capacity = 10;
-    harr = new Node * [10];
+    harr = new Node *[10];
+    for (int i = 0; i < capacity; i++)
+        harr[i] = new Node;
 }
 
 // Inserts a new key 'k'
-void MinHeap::insertKey(unsigned id, unsigned revenue ) {
+void MinHeap::insertKey(unsigned id, unsigned revenue) {
     if (heap_size == capacity) {
         std::cout << "\nOverflow: Could not insertKey\n";
         capacity = capacity * 2;
-        Node ** newArray = new Node * [capacity];
-        for( int i = 0; i < (capacity/2); i++ ){
+        Node **newArray = new Node *[capacity];
+        for (int i = 0; i < (capacity / 2); i++) {
             newArray[i]->setId(harr[i]->getId());
             newArray[i]->setRevenue(harr[i]->getRevenue());
             delete harr[i];
         }
-        delete [] harr;
+        delete[] harr;
         harr = newArray;
     }
 
@@ -98,47 +135,51 @@ void MinHeap::insertKey(unsigned id, unsigned revenue ) {
     harr[i]->setRevenue(revenue);
 
     // Fix the min heap property if it is violated
-    while (i != 0 && harr[parent(i)] > harr[i]) {
-        swap(harr[i], harr[parent(i)]);
+    while (i != 0 && (harr[parent(i)]->compareTo(harr[i]) == 1)) {
+        swapNode(harr[i], harr[parent(i)]);
         i = parent(i);
     }
 }
 
 // Decreases value of key at index 'i' to new_val.  It is assumed that
 // new_val is smaller than harr[i].
+/*
 void MinHeap::decreaseKey(int i, int new_val) {
     harr[i] = new_val;
     while (i != 0 && harr[parent(i)] > harr[i]) {
-        swap(&harr[i], &harr[parent(i)]);
+        swap(harr[i], harr[parent(i)]);
         i = parent(i);
     }
 }
+*/
 
 // Method to remove minimum element (or root) from min heap
-int MinHeap::extractMin() {
+bool MinHeap::extractMin(unsigned int &id) {
     if (heap_size <= 0)
-        return INT_MAX;
-    if (heap_size == 1) {
-        heap_size--;
-        return harr[0];
-    }
+        return false;
+
+    heap_size--;
+    id = harr[0]->getId();
+    //return true;
+
 
     // Store the minimum value, and remove it from heap
-    int root = harr[0];
-    harr[0] = harr[heap_size - 1];
+    //harr[0] = harr[heap_size - 1];
+    swap(harr[0], harr[heap_size - 1]);
+    delete harr[heap_size - 1];
     heap_size--;
     MinHeapify(0);
 
-    return root;
+    return true;
 }
 
 
 // This function deletes key at index i. It first reduced value to minus
 // infinite, then calls extractMin()
-void MinHeap::deleteKey(int i) {
+/*void MinHeap::deleteKey(int i) {
     decreaseKey(i, INT_MIN);
     extractMin();
-}
+}*/
 
 // A recursive method to heapify a subtree with the root at given index
 // This method assumes that the subtrees are already heapified
@@ -146,42 +187,101 @@ void MinHeap::MinHeapify(int i) {
     int l = left(i);
     int r = right(i);
     int smallest = i;
-    if (l < heap_size && harr[l] < harr[i])
+    if (l < heap_size && harr[i]->compareTo(harr[l]))
         smallest = l;
-    if (r < heap_size && harr[r] < harr[smallest])
+    if (r < heap_size && harr[smallest]->compareTo(harr[r]))
         smallest = r;
     if (smallest != i) {
-        swap(&harr[i], &harr[smallest]);
+        swapNode(harr[i], harr[smallest]);
         MinHeapify(smallest);
     }
 }
 
-// A utility function to swap two elements
-void swap(Node * x, Node *y) {
-    Node * temp = x;
-    x = y;
-    y = temp;
+Node **MinHeap::getHarr() const {
+    return harr;
 }
 
-class CHolding
-        {
-                public:
-                // default constructor
-                // destructor
-                void Add    (int chain, unsigned int id, unsigned int revenue);
-                bool Remove (int chain, unsigned int & id);
-                bool Remove (unsigned int & id);
-                void Merge  (int dstChain, int srcChain);
-                bool Merge  (void);
-                private:
-                // todo
-        };
+void MinHeap::setHarr(Node **harr) {
+    MinHeap::harr = harr;
+}
+
+int MinHeap::getCapacity() const {
+    return capacity;
+}
+
+void MinHeap::setCapacity(int capacity) {
+    MinHeap::capacity = capacity;
+}
+
+int MinHeap::getHeapSize() const {
+    return heap_size;
+}
+
+void MinHeap::setHeapSize(int heapSize) {
+    heap_size = heapSize;
+}
+
+
+class CHolding {
+public:
+    // default constructor
+    // destructor
+    void Add(int chain, unsigned int id, unsigned int revenue);
+
+    bool Remove(int chain, unsigned int &id);
+
+    bool Remove(unsigned int &id);
+
+    void Merge(int dstChain, int srcChain);
+
+    bool Merge(void);
+
+private:
+    // todo
+};
 
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
+    MinHeap h;
 
-    bool res;
+    h.insertKey(1, 3);
+    cout << "1: " << "\n";
+    for (int i = 0; i < h.getHeapSize(); i++)
+        cout << h.getHarr()[i]->getRevenue() << " ";
+    cout << "\n";
+    h.insertKey(1, 2);
+    cout << "2: " << "\n";
+    for (int i = 0; i < h.getHeapSize(); i++)
+        cout << h.getHarr()[i]->getRevenue() << " ";
+    cout << "\n";
+    h.insertKey(1, 15);
+    cout << "3: " << "\n";
+    for (int i = 0; i < h.getHeapSize(); i++)
+        cout << h.getHarr()[i]->getRevenue() << " ";
+    cout << "\n";
+    h.insertKey(1, 5);
+    cout << "4: " << "\n";
+    for (int i = 0; i < h.getHeapSize(); i++)
+        cout << h.getHarr()[i]->getRevenue() << " ";
+    cout << "\n";
+    h.insertKey(1, 4);
+    cout << "5: " << "\n";
+    for (int i = 0; i < h.getHeapSize(); i++)
+        cout << h.getHarr()[i]->getRevenue() << " ";
+    cout << "\n";
+    h.insertKey(1, 45);
+    cout << "6: " << "\n";
+    for (int i = 0; i < h.getHeapSize(); i++)
+        cout << h.getHarr()[i]->getRevenue() << " ";
+    cout << "\n";
+    cout << "Delete: ";
+    unsigned int id = 0;
+    h.extractMin(id);
+    for (int i = 0; i < h.getHeapSize(); i++)
+        cout << h.getHarr()[i]->getRevenue() << " ";
+    cout << "\n";
+    /*bool res;
     unsigned int id;
 
 //Ukazkovy vstup #1
@@ -257,6 +357,6 @@ int main() {
     // res = true, id = 202
     res = f3 . Remove ( id );
     // res = true, id = 302
-
+    */
     return 0;
 }
