@@ -1,4 +1,6 @@
-/usr/local/share/apps/CLion/ch-0/192.6603.37/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/kalacvla/CLionProjects/progtest2
--- Configuring done
--- Generating done
--- Build files have been written to: /home/kalacvla/CLionProjects/progtest2/cmake-build-debug
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -G "CodeBlocks - Unix Makefiles" /Users/Gribochek/Desktop/Progtest/AG1
+CMake Error at CMakeLists.txt:1 (cmake_minimum_required):
+  CMake 3.14 or higher is required.  You are running version 3.13.2
+
+
+-- Configuring incomplete, errors occurred!

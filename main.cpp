@@ -1,5 +1,5 @@
 #include <iostream>
-#include <gmpxx.h>
+
 
 using namespace std;
 
@@ -158,14 +158,16 @@ bool MinHeap::extractMin(unsigned int &id) {
     if (heap_size <= 0)
         return false;
 
-    heap_size--;
+    //heap_size--;
     id = harr[0]->getId();
     //return true;
 
 
     // Store the minimum value, and remove it from heap
     //harr[0] = harr[heap_size - 1];
+    cout << harr[0]->getRevenue() << " : " << harr[heap_size - 1]->getRevenue() << "\n" << flush;
     swap(harr[0], harr[heap_size - 1]);
+    cout << harr[0]->getRevenue() << " : " << harr[heap_size - 1]->getRevenue() << "\n" << flush;
     delete harr[heap_size - 1];
     heap_size--;
     MinHeapify(0);
@@ -187,9 +189,9 @@ void MinHeap::MinHeapify(int i) {
     int l = left(i);
     int r = right(i);
     int smallest = i;
-    if (l < heap_size && harr[i]->compareTo(harr[l]))
+    if (l < heap_size && ( harr[i]->compareTo(harr[l]) == 1) )
         smallest = l;
-    if (r < heap_size && harr[smallest]->compareTo(harr[r]))
+    if (r < heap_size && ( harr[smallest]->compareTo(harr[r]) == 1) )
         smallest = r;
     if (smallest != i) {
         swapNode(harr[i], harr[smallest]);
@@ -245,35 +247,38 @@ int main() {
     std::cout << "Hello, World!" << std::endl;
     MinHeap h;
 
-    h.insertKey(1, 3);
+    h.insertKey(3, 3);
     cout << "1: " << "\n";
     for (int i = 0; i < h.getHeapSize(); i++)
         cout << h.getHarr()[i]->getRevenue() << " ";
     cout << "\n";
-    h.insertKey(1, 2);
+    h.insertKey(2, 2);
     cout << "2: " << "\n";
     for (int i = 0; i < h.getHeapSize(); i++)
         cout << h.getHarr()[i]->getRevenue() << " ";
     cout << "\n";
-    h.insertKey(1, 15);
+    h.insertKey(15, 15);
     cout << "3: " << "\n";
     for (int i = 0; i < h.getHeapSize(); i++)
         cout << h.getHarr()[i]->getRevenue() << " ";
     cout << "\n";
-    h.insertKey(1, 5);
+    h.insertKey(5, 5);
     cout << "4: " << "\n";
     for (int i = 0; i < h.getHeapSize(); i++)
         cout << h.getHarr()[i]->getRevenue() << " ";
     cout << "\n";
-    h.insertKey(1, 4);
+    h.insertKey(4, 4);
     cout << "5: " << "\n";
     for (int i = 0; i < h.getHeapSize(); i++)
         cout << h.getHarr()[i]->getRevenue() << " ";
     cout << "\n";
-    h.insertKey(1, 45);
+    h.insertKey(45, 45);
     cout << "6: " << "\n";
     for (int i = 0; i < h.getHeapSize(); i++)
         cout << h.getHarr()[i]->getRevenue() << " ";
+
+
+
     cout << "\n";
     cout << "Delete: ";
     unsigned int id = 0;
